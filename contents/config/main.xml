@@ -5,7 +5,7 @@
     <group name="General">
 
         <entry name="tempCheckbox" type="Bool">
-            <default>false</default>
+            <default>true</default>
         </entry>
 
 

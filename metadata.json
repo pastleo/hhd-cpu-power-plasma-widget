@@ -5,16 +5,17 @@
                 "Name": "FENZIGO"
             }
         ],
+        "Id": "org.kde.plasma.desktoptdpcontrol",
         "Category": "Utilities",
         "Description": "Ryzenadj minimalistic gui",
         "Icon": "new-command-alarm",
         "License": "GPL-3.0-or-later",
         "Name": "SteamDeck TDP",
-        "ServiceTypes": [
-            "Plasma/Applet"
-        ],
         "Version": "1.0"
     },
     "X-Plasma-API": "declarativeappletscript",
-    "X-Plasma-MainScript": "ui/main.qml"
+    "X-Plasma-MainScript": "ui/main.qml",
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "KPackageStructure": "Plasma/Applet"
+
 }

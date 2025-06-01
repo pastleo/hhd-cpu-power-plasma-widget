@@ -1,15 +1,21 @@
-import QtQuick 2.6
-import QtQuick.Layouts 1.1
+import QtQuick 2.0
+import QtQuick.Layouts 1.0
 import org.kde.plasma.plasmoid 2.0
+import QtQuick.Controls 2.5
 import org.kde.plasma.core 2.0 as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents3
+import org.kde.plasma.plasma5support as Plasma5Support
 
 
 
-ColumnLayout {
-    
-  
-    PlasmaCore.DataSource {
+PlasmoidItem {
+    PlasmaComponents3.ToolButton {
+        onClicked: plasmoid.expanded = !plasmoid.expanded
+        ToolTip.text: i18n("Open TDP Control")
+        ToolTip.visible: hovered
+    }
+
+    Plasma5Support.DataSource {
         id: execute
         engine: "executable"
         connectedSources: []
@@ -19,123 +25,99 @@ ColumnLayout {
             execute.connectSource(command)
         }
     }
-   
-// tdp
-    RowLayout {
-        PlasmaComponents3.Label {
-            id: tdpLabel
-            text: i18n("Set Max TDP:")
-            
-        }
-        PlasmaComponents3.Slider {
-            id: tdpSlider
-            Layout.fillWidth: true
-            from: 3
-            to: 15
-            value: 10
-            stepSize: 1
-            
-        }
-        PlasmaComponents3.Label {
-            id: tdpSliderValueLabel
-            function formatText(value) {
-                return i18n("%1W", value)
-            }
-            text: formatText(tdpSlider.value)
-            Layout.minimumWidth: textMetrics.width
-            
-        }
-        
-        PlasmaComponents3.Button {
-        text: i18n("Apply")
-        
-        onClicked: {
-            runCommand1()
-            }
-        }
-    }
 
-// temp
-    RowLayout {
-    visible: plasmoid.configuration.tempCheckbox
+    fullRepresentation: ColumnLayout {
+        spacing: 10
+        anchors.margins: 10
 
-        PlasmaComponents3.Label {
-            id: tempLabel
-            text: i18n("Set Max Temp:")
-            
-        }
-        PlasmaComponents3.Slider {
-            id: tempSlider
-            Layout.fillWidth: true
-            from: 45
-            to: 90
-            value: 80
-            stepSize: 5
-            
-        }
-        PlasmaComponents3.Label {
-            id: tempSliderValueLabel
-            function formatText(value) {
-                return i18n("%1°C", value)
+        // TDP Control
+        RowLayout {
+            PlasmaComponents3.Label { text: i18n("Set Max TDP:") }
+
+            PlasmaComponents3.Slider {
+                id: tdpSlider
+                from: 3; to: 15; value: 10; stepSize: 1
+                Layout.fillWidth: true
             }
-            text: formatText(tempSlider.value)
-            Layout.minimumWidth: textMetrics.width
-            
-        }
-        PlasmaComponents3.Button {
-        text: i18n("Apply")
-        
-        onClicked: {
-            runCommand2()
+
+            PlasmaComponents3.Label {
+                text: i18n("%1W", tdpSlider.value)
+            }
+
+            PlasmaComponents3.Button {
+                text: i18n("Apply")
+                onClicked: runCommand1()
             }
         }
-    }
 
-// preset
-    RowLayout {
-        Layout.alignment: Qt.AlignHCenter
-        anchors.horizontalCenter: parent.horizontalCenter
+        // Temp Control
+        RowLayout {
+            visible: plasmoid.configuration.tempCheckbox
 
-        PlasmaComponents3.Button {
-        visible: plasmoid.configuration.preset1Checkbox    
-        text: i18n(plasmoid.configuration.preset1Name)
-        onClicked: {
-            runCommand3()
+            PlasmaComponents3.Label { text: i18n("Set Max Temp:") }
+
+            PlasmaComponents3.Slider {
+                id: tempSlider
+                from: 45; to: 90; value: 80; stepSize: 5
+                Layout.fillWidth: true
+            }
+
+            PlasmaComponents3.Label {
+                text: i18n("%1°C", tempSlider.value)
+            }
+
+            PlasmaComponents3.Button {
+                text: i18n("Apply")
+                onClicked: runCommand2()
             }
         }
-        PlasmaComponents3.Button {
-        visible: plasmoid.configuration.preset1Checkbox && plasmoid.configuration.preset2Checkbox 
-        text: i18n(plasmoid.configuration.preset2Name)
-        onClicked: {
-            runCommand4()
+
+        // Presets
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+
+            PlasmaComponents3.Button {
+                visible: plasmoid.configuration.preset1Checkbox
+                text: i18n(plasmoid.configuration.preset1Name)
+                onClicked: runCommand3()
+            }
+
+            PlasmaComponents3.Button {
+                visible: plasmoid.configuration.preset1Checkbox && plasmoid.configuration.preset2Checkbox
+                text: i18n(plasmoid.configuration.preset2Name)
+                onClicked: runCommand4()
             }
         }
-    }
 
-    function runCommand1() {
-        
+        function runRyzenAdjCommand(args) {
+            let path ="$HOME/.local/share/plasma/plasmoids/org.kde.plasma.desktoptdpcontrol/contents/libs/ryzenadj";
+            let safeArgs = args.replace(/(["`\\$])/g, '\\$1');  // basic escaping
+            let command = `konsole -e sudo bash -c "${path} ${safeArgs}; read -p 'Press any key to continue...'"`;
+            execute.run(command);
+        }
+        // Command runners
+        function runCommand1() {
             let value = tdpSlider.value;
-            let command = `konsole -e sudo bash -c "$HOME/.local/share/plasma/plasmoids/metadata/contents/libs/ryzenadj --stapm-limit=${value}000 --fast-limit=${value}000 --slow-limit=${value}000; read -p 'Press any key to continue...'"`;
-            execute.run(command);
-            } 
-    function runCommand2() {
-        
-            let value = tempSlider.value;
-            let command = `konsole -e sudo bash -c "$HOME/.local/share/plasma/plasmoids/metadata/contents/libs/ryzenadj --tctl-temp=${value}; read -p 'Press any key to continue...'"`;
-            execute.run(command);
-            }      
-    function runCommand3() {
-        
-            let value = plasmoid.configuration.preset1String;
-            let command = `konsole -e sudo bash -c "$HOME/.local/share/plasma/plasmoids/metadata/contents/libs/ryzenadj ${value}; read -p 'Press any key to continue...'"`;
-            execute.run(command);
-            }        
-    function runCommand4() {
-        
-            let value = plasmoid.configuration.preset2String;
-            let command = `konsole -e sudo bash -c "$HOME/.local/share/plasma/plasmoids/metadata/contents/libs/ryzenadj ${value}; read -p 'Press any key to continue...'"`;
-            execute.run(command);
-            }   
-}
-    
+            runRyzenAdjCommand(`--stapm-limit=${value}000 --fast-limit=${value}000 --slow-limit=${value}000`);
+        }
 
+        function runCommand2() {
+            let value = tempSlider.value;
+            runRyzenAdjCommand(`--tctl-temp=${value}`);
+        }
+
+        function runCommand3() {
+            let path ="$HOME/.local/share/plasma/plasmoids/org.kde.plasma.desktoptdpcontrol/contents/libs/ryzenadj";
+            let value = plasmoid.configuration.preset1String;
+            let command = `konsole -e sudo bash -c "${path} ${value}; read -p 'Press any key to continue...'"`;
+            execute.run(command);
+        }
+
+        function runCommand4() {
+            let path ="$HOME/.local/share/plasma/plasmoids/org.kde.plasma.desktoptdpcontrol/contents/libs/ryzenadj";
+            let value = plasmoid.configuration.preset2String;
+            let command = `konsole -e sudo bash -c "${path} ${value}; read -p 'Press any key to continue...'"`;
+            execute.run(command);
+        }
+    }
+}
