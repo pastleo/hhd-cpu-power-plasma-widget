@@ -11,9 +11,10 @@ Since the program to change the APU behavior uses [FlyGoat/RyzenAdj](https://git
 ## Installation:
 
 1. Download "SteamDeck.TDP.plasmoid" from releases.
-2. Run "kpackagetool5 -i SteamDeck.TDP.plasmoid" from konsole in your Download directory.
-3. On your desktop: PPM>Add Widgets... Add "SteamDeck TDP" widget.
-4. By entering PPM>Enter Edit Mode, you can place the widget anywhere you want.
+2. 
+   ![alt text](https://i.imgur.com/FEWM2Hj.png)
+4. On your desktop: PPM>Add Widgets... Add "SteamDeck TDP" widget.
+5. By entering PPM>Enter Edit Mode, you can place the widget anywhere you want.
 
 ## Overclocked Steam Deck's and other devices:
 
@@ -30,10 +31,5 @@ PlasmaComponents3.Slider {
   stepSize: 1           
 }
 ```     
-Later I will add the ability to change the default values ​​in the configuration menu.
 
-## When I find out how I will maybe add it:
 
-- Fan curve configuration
-- Battery charge limit
-- Displaying the current temperature on the bar
