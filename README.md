@@ -11,10 +11,11 @@ Since the program to change the APU behavior uses [FlyGoat/RyzenAdj](https://git
 ## Installation:
 
 1. Download "SteamDeck.TDP.plasmoid" from releases.
-2. 
+2. On your desktop: PPM>Enter Edit Mode>Add or Manage Widgets>Get New>Install Widget From Local File...
    ![alt text](https://i.imgur.com/FEWM2Hj.png)
-4. On your desktop: PPM>Add Widgets... Add "SteamDeck TDP" widget.
-5. By entering PPM>Enter Edit Mode, you can place the widget anywhere you want.
+4. Pick downloaded "SteamDeck.TDP.plasmoid"
+5. Open commandline and use `chmod +x $HOME/.local/share/plasma/plasmoids/org.kde.plasma.desktoptdpcontrol/contents/libs/ryzenadj` to enable ryzenadj to execute.
+6. By entering PPM>Enter Edit Mode, you can place the widget anywhere you want.
 
 ## Overclocked Steam Deck's and other devices:
 
