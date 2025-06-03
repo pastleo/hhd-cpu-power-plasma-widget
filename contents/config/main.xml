@@ -4,6 +4,10 @@
 
     <group name="General">
 
+        <entry name="outputCheckbox" type="Bool">
+            <default>true</default>
+        </entry>
+
         <entry name="tempCheckbox" type="Bool">
             <default>true</default>
         </entry>
