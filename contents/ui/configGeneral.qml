@@ -8,8 +8,8 @@ import org.kde.kirigami 2.4 as Kirigami
 
 Item {
     id: page
-  
-    
+
+    property alias cfg_outputCheckbox: outputCheckbox.checked
     property alias cfg_tempCheckbox: tempCheckbox.checked
     property alias cfg_preset1Checkbox: preset1Checkbox.checked
     property alias cfg_preset2Checkbox: preset2Checkbox.checked
@@ -23,8 +23,13 @@ Item {
         anchors.right: parent.right
 
         CheckBox {
+            id: outputCheckbox
+            Kirigami.FormData.label: i18n("Output TextArea:")
+        }
+
+        CheckBox {
             id: tempCheckbox
-            Kirigami.FormData.label: i18n("Limit by temp:")           
+            Kirigami.FormData.label: i18n("Limit by temp:")
         }
 
 
@@ -34,21 +39,21 @@ Item {
         }
         ColumnLayout {
             visible: preset1Checkbox.checked
-            
+
             TextField {
-            id: preset1Name                     
-            placeholderText: i18n("Your preset name...")          
-            } 
+            id: preset1Name
+            placeholderText: i18n("Your preset name...")
+            }
             RowLayout {
             TextField {
-            id: preset1String           
-            placeholderText: i18n("--tctl-temp=80 --apu-slow-limit=15000")          
-            }  
+            id: preset1String
+            placeholderText: i18n("--tctl-temp=80 --apu-slow-limit=15000")
+            }
             Button {
             text: i18n("List")
             onClicked: usageDialog.open()
             }
-            }  
+            }
         }
 
 
@@ -60,17 +65,17 @@ Item {
         ColumnLayout {
             visible: preset1Checkbox.checked && preset2Checkbox.checked
             TextField {
-            id: preset2Name 
-            placeholderText: i18n("Your preset name...")          
+            id: preset2Name
+            placeholderText: i18n("Your preset name...")
             }
             TextField {
-            id: preset2String            
-            placeholderText: i18n("--tctl-temp=80 --apu-slow-limit=15000")          
+            id: preset2String
+            placeholderText: i18n("--tctl-temp=80 --apu-slow-limit=15000")
             }
         }
 
-        
-        
+
+
     }
 
     Dialog {
