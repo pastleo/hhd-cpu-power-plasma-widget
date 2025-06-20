@@ -7,10 +7,10 @@
         ],
         "Id": "org.kde.plasma.desktoptdpcontrol",
         "Category": "Utilities",
-        "Description": "Ryzenadj minimalistic gui",
-        "Icon": "new-command-alarm",
+        "Description": "HHD (Handheld Daemon) minimalistic gui",
+        "Icon": "new-command-alarm", 
         "License": "GPL-3.0-or-later",
-        "Name": "SteamDeck TDP",
+        "Name": "HHD Control",
         "Version": "1.0"
     },
     "X-Plasma-API": "declarativeappletscript",

@@ -9,7 +9,7 @@ import org.kde.plasma.plasma5support as Plasma5Support
 PlasmoidItem {
     PlasmaComponents3.ToolButton {
         onClicked: plasmoid.expanded = !plasmoid.expanded
-        ToolTip.text: i18n("Open TDP Control")
+        ToolTip.text: i18n("Open HHD Control")
         ToolTip.visible: hovered
     }
 
@@ -17,6 +17,115 @@ PlasmoidItem {
         spacing: 10
         anchors.margins: 10
 
+        property string hhdToken: ""
+        property string hhdApiUrl: "http://localhost:5335/api/v1/state"
+        property string hhdSettingsUrl: "http://localhost:5335/api/v1/settings"
+        property string debugStatus: "Initializing..."
+        
+        Component.onCompleted: {
+            loadHhdToken()
+        }
+        
+        function loadHhdToken() {
+            var tokenCommand = "cat ~/.config/hhd/token"
+            debugStatus = "Loading HHD token..."
+            tokenLoader.connectSource(tokenCommand)
+        }
+        
+        function loadTdpLimits() {
+            if (!hhdToken) {
+                debugStatus = "No token available for TDP limits"
+                return;
+            }
+            
+            let curlCommand = `curl -s "${hhdSettingsUrl}" -H "Authorization: Bearer ${hhdToken}"`;
+            
+            debugStatus = "Loading TDP limits..."
+            limitsLoader.connectSource(curlCommand);
+        }
+        
+        function loadCurrentTdp() {
+            if (!hhdToken) {
+                debugStatus = "No token available for current TDP"
+                return;
+            }
+            
+            let curlCommand = `curl -s "${hhdApiUrl}" -H "Authorization: Bearer ${hhdToken}"`;
+            
+            debugStatus = "Loading current TDP..."
+            currentTdpLoader.connectSource(curlCommand);
+        }
+        
+        // DataSource for loading HHD token
+        Plasma5Support.DataSource {
+            id: tokenLoader
+            engine: "executable"
+            connectedSources: []
+            onNewData: function(sourceName) {
+                hhdToken = tokenLoader.data[sourceName].stdout.trim()
+                debugStatus = hhdToken ? "Token loaded ✓" : "Token failed ✗"
+                tokenLoader.disconnectSource(sourceName)
+                if (hhdToken) {
+                    loadTdpLimits()
+                    loadCurrentTdp()
+                }
+            }
+        }
+        
+        // DataSource for loading TDP limits
+        Plasma5Support.DataSource {
+            id: limitsLoader
+            engine: "executable"
+            connectedSources: []
+            onNewData: function(sourceName) {
+                var output = limitsLoader.data[sourceName].stdout.trim()
+                if (output) {
+                    try {
+                        var json = JSON.parse(output)
+                        if (json.tdp && json.tdp.qam && json.tdp.qam.children && json.tdp.qam.children.tdp) {
+                            var tdpConfig = json.tdp.qam.children.tdp
+                            if (tdpConfig.min !== undefined && tdpConfig.max !== undefined) {
+                                tdpSlider.from = tdpConfig.min
+                                tdpSlider.to = tdpConfig.max
+                                debugStatus = `TDP limits: ${tdpSlider.from}-${tdpSlider.to}W`
+                            }
+                        }
+                    } catch (e) {
+                        debugStatus = "Failed to parse TDP limits"
+                    }
+                } else {
+                    debugStatus = "No TDP limits data received"
+                }
+                limitsLoader.disconnectSource(sourceName)
+            }
+        }
+        
+        // DataSource for loading current TDP
+        Plasma5Support.DataSource {
+            id: currentTdpLoader
+            engine: "executable"
+            connectedSources: []
+            onNewData: function(sourceName) {
+                var output = currentTdpLoader.data[sourceName].stdout.trim()
+                if (output) {
+                    try {
+                        var json = JSON.parse(output)
+                        if (json.tdp && json.tdp.qam && json.tdp.qam.tdp !== undefined) {
+                            var currentTdp = json.tdp.qam.tdp
+                            tdpSlider.value = Math.min(Math.max(currentTdp, tdpSlider.from), tdpSlider.to)
+                            debugStatus = `Ready - Current TDP: ${currentTdp}W`
+                        }
+                    } catch (e) {
+                        debugStatus = "Failed to parse current TDP"
+                    }
+                } else {
+                    debugStatus = "No current TDP data received"  
+                }
+                currentTdpLoader.disconnectSource(sourceName)
+            }
+        }
+        
+        // DataSource for general command execution
         Plasma5Support.DataSource {
             id: execute
             engine: "executable"
@@ -27,99 +136,56 @@ PlasmoidItem {
         }
 
 
+        // Debug Status
+        PlasmaComponents3.Label {
+            text: debugStatus
+            Layout.fillWidth: true
+            font.pointSize: 8
+            color: PlasmaCore.Theme.disabledTextColor
+        }
+
         // TDP Control
         RowLayout {
-            PlasmaComponents3.Label { text: i18n("Set Max TDP:") }
+            PlasmaComponents3.Label { text: i18n("TDP:") }
             PlasmaComponents3.Slider {
                 id: tdpSlider
                 from: 3; to: 15; value: 10; stepSize: 1
                 Layout.fillWidth: true
+                onValueChanged: runCommand1()
             }
             PlasmaComponents3.Label { text: i18n("%1W", tdpSlider.value) }
-            PlasmaComponents3.Button {
-                text: i18n("Apply")
-                onClicked: runCommand1()
-            }
         }
 
-        // Temp Control
-        RowLayout {
-            visible: plasmoid.configuration.tempCheckbox
-            PlasmaComponents3.Label { text: i18n("Set Max Temp:") }
-            PlasmaComponents3.Slider {
-                id: tempSlider
-                from: 45; to: 90; value: 80; stepSize: 5
-                Layout.fillWidth: true
-            }
-            PlasmaComponents3.Label { text: i18n("%1°C", tempSlider.value) }
-            PlasmaComponents3.Button {
-                text: i18n("Apply")
-                onClicked: runCommand2()
-            }
-        }
-
-        // Presets
-        RowLayout {
-            Layout.alignment: Qt.AlignHCenter
-            PlasmaComponents3.Button {
-                visible: plasmoid.configuration.preset1Checkbox
-                text: i18n(plasmoid.configuration.preset1Name)
-                onClicked: runCommand3()
-            }
-            PlasmaComponents3.Button {
-                visible: plasmoid.configuration.preset1Checkbox && plasmoid.configuration.preset2Checkbox
-                text: i18n(plasmoid.configuration.preset2Name)
-                onClicked: runCommand4()
-            }
-        }
-
-        // Output Text Area
-        PlasmaComponents3.TextArea {
-            id: outputArea
-            visible: plasmoid.configuration.outputCheckbox
-            Layout.fillWidth: true
-            Layout.preferredHeight: 33
-            readOnly: true
-            placeholderText: i18n("Output will be displayed here...")
-        }
         Item { Layout.fillWidth: true }
 
         function handleOutput(sourceName) {
-            var output = execute.data[sourceName].stdout;
-            if (output !== undefined && output.length > 0) {
-                outputArea.text = output + "\n" + outputArea.text;
-            }
             execute.disconnectSource(sourceName);
         }
 
-        function runRyzenAdjCommand(args) {
-            let path = "$HOME/.local/share/plasma/plasmoids/org.kde.plasma.desktoptdpcontrol/contents/libs/ryzenadj";
-            let safeArgs = args.replace(/(["`\\$])/g, '\\$1');  // basic escaping
-            let command = `bash -c "sudo ${path} ${safeArgs}"`;
-            execute.connectSource(command);
+        function runHhdCommand(settings) {
+            if (!hhdToken) {
+                debugStatus = "Error: HHD token not loaded";
+                return;
+            }
+            
+            let settingsJson = JSON.stringify(settings);
+            let curlCommand = `curl -s -X POST "${hhdApiUrl}" ` +
+                           `-H "Authorization: Bearer ${hhdToken}" ` +
+                           `-H "Content-Type: application/json" ` +
+                           `-d '${settingsJson}'`;
+            
+            if (settings["tdp.qam.tdp"]) {
+                debugStatus = `TDP set to ${settings["tdp.qam.tdp"]}W`;
+            }
+            execute.connectSource(curlCommand);
         }
 
         // Command runners
         function runCommand1() {
             let value = tdpSlider.value;
-            runRyzenAdjCommand(`--stapm-limit=${value}000 --fast-limit=${value}000 --slow-limit=${value}000`);
-
-
-        }
-        function runCommand2() {
-            let value = tempSlider.value;
-            runRyzenAdjCommand(`--tctl-temp=${value}`);
-
-        }
-        function runCommand3() {
-            let value = plasmoid.configuration.preset1String;
-            runRyzenAdjCommand(value)
-
-        }
-        function runCommand4() {
-            let value = plasmoid.configuration.preset2String;
-            runRyzenAdjCommand(value)
-
+            runHhdCommand({
+                "tdp.qam.tdp": value
+            });
         }
 
     }

@@ -1,36 +1,64 @@
-# Steam Deck TDP Management Applet
+# HHD Control Plasmoid
 
 ![alt text](https://i.imgur.com/pxDZ3mH.png)
 
-This applet allows you to manage the TDP (Thermal Design Power) settings of your Steam Deck and other AMD devices directly from the desktop mode. Created for my own use, but it may be useful to someone.
-Since the program to change the APU behavior uses [FlyGoat/RyzenAdj](https://github.com/FlyGoat/RyzenAdj), it also inherits all its functions. You can add your own flags from the widget configuration menu and save them as a preset. The Steam Deck chip is not fully supported by ryzenadj so some adj functions may not work.
-
+A KDE Plasma widget that provides a minimalistic GUI for HHD (Handheld Daemon). This plasmoid allows you to manage TDP (Thermal Design Power) settings and other handheld device controls directly from your desktop.
 
 ![alt text](https://i.imgur.com/JiLI78g.png)
 
-## Installation:
+## Building
 
-1. Download "SteamDeck.TDP.plasmoid" from releases.
-2. On your desktop: PPM>Enter Edit Mode>Add or Manage Widgets>Get New>Install Widget From Local File...
-   ![alt text](https://i.imgur.com/FEWM2Hj.png)
-4. Pick downloaded "SteamDeck.TDP.plasmoid"
-5. Open commandline and use `chmod +x $HOME/.local/share/plasma/plasmoids/org.kde.plasma.desktoptdpcontrol/contents/libs/ryzenadj` to enable ryzenadj to execute.
-6. By entering PPM>Enter Edit Mode, you can place the widget anywhere you want.
+To build the plasmoid package for installation:
 
-## Overclocked Steam Deck's and other devices:
-
-If you want to increase the limit to more than 15W, you can do so by editing the main.qml file. After installation, the file is located in:
-"/home/deck/.local/share/plasma/plasmoids/metadata/contents/ui" Just change value in line 34:
-
+```bash
+./build.sh
 ```
-PlasmaComponents3.Slider {
-  id: tdpSlider
-  Layout.fillWidth: true
-  from: 3
-  to: 15 <<< This one
-  value: 10
-  stepSize: 1           
-}
-```     
 
+This will create a `.plasmoid` file that can be installed on any KDE Plasma desktop.
 
+## Installation
+
+### From Release
+1. Download the `.plasmoid` file from releases
+2. Install using: `plasmapkg2 --install <filename>.plasmoid`
+
+### From Source
+1. Build the package: `./build.sh`
+2. Install the generated `.plasmoid` file: `plasmapkg2 --install org.kde.plasma.desktoptdpcontrol-*.plasmoid`
+
+### Manual Installation
+1. On your desktop: Right-click > Enter Edit Mode > Add or Manage Widgets > Get New > Install Widget From Local File...
+   ![alt text](https://i.imgur.com/FEWM2Hj.png)
+2. Select the `.plasmoid` file
+3. The widget will be available in your widget list
+
+## Management Commands
+
+After installation, you can manage the plasmoid using these commands:
+
+```bash
+# Upgrade to newer version
+plasmapkg2 --upgrade org.kde.plasma.desktoptdpcontrol-*.plasmoid
+
+# Remove/uninstall
+plasmapkg2 --remove org.kde.plasma.desktoptdpcontrol
+
+# List installed plasmoids  
+plasmapkg2 --list
+```
+
+## Configuration
+
+The widget can be configured by right-clicking on it and selecting "Configure". You can customize TDP limits and other HHD daemon settings through the configuration panel.
+
+## Development
+
+For development, you can link the source directory directly:
+
+```bash
+git clone <this-repo> <repo-path>
+cd ~/.local/share/plasma/plasmoids/
+ln -s <repo-path> org.kde.plasma.desktoptdpcontrol
+```
+
+This allows you to edit the source files and see changes immediately by restarting Plasma or refreshing the widget.
