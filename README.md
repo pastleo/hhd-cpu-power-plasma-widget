@@ -1,10 +1,22 @@
 # HHD Control Plasmoid
 
-![alt text](https://i.imgur.com/pxDZ3mH.png)
-
 A KDE Plasma widget that provides a minimalistic GUI for HHD (Handheld Daemon). This plasmoid allows you to manage TDP (Thermal Design Power) settings and other handheld device controls directly from your desktop.
 
-![alt text](https://i.imgur.com/JiLI78g.png)
+The widget features:
+- Simple TDP slider control
+- Real-time TDP adjustment via HHD daemon
+- Configurable preset shortcuts
+- Compact design suitable for desktop panels or desktop placement
+
+## Screenshots
+
+### Widget in Action
+![TDP Control Widget](docs/Screenshot_20250621_150756.png)
+*The HHD Control widget showing the TDP slider in the system panel*
+
+### Installation Dialog
+![Widget Installation](docs/Screenshot_20250621_152647.png)
+*Installing the widget through KDE's "Install Widget From Local File" dialog*
 
 ## Building
 
@@ -26,11 +38,13 @@ This will create a `.plasmoid` file that can be installed on any KDE Plasma desk
 1. Build the package: `./build.sh`
 2. Install the generated `.plasmoid` file: `kpackagetool6 --type=Plasma/Applet --install org.kde.plasma.desktoptdpcontrol-*.plasmoid`
 
-### Manual Installation
-1. On your desktop: Right-click > Enter Edit Mode > Add or Manage Widgets > Get New > Install Widget From Local File...
-   ![alt text](https://i.imgur.com/FEWM2Hj.png)
-2. Select the `.plasmoid` file
-3. The widget will be available in your widget list
+### Manual Installation (GUI)
+1. Right-click on your desktop and select "Enter Edit Mode"
+2. Click "Add or Manage Widgets" 
+3. Click "Get New Widgets" at the bottom
+4. Select "Install Widget From Local File..."
+5. Browse and select the `.plasmoid` file
+6. The widget will appear in your widget list as "HHD Control"
 
 ## Management Commands
 
@@ -50,15 +64,3 @@ kpackagetool6 --type=Plasma/Applet --list
 ## Configuration
 
 The widget can be configured by right-clicking on it and selecting "Configure". You can customize TDP limits and other HHD daemon settings through the configuration panel.
-
-## Development
-
-For development, you can link the source directory directly:
-
-```bash
-git clone <this-repo> <repo-path>
-cd ~/.local/share/plasma/plasmoids/
-ln -s <repo-path> org.kde.plasma.desktoptdpcontrol
-```
-
-This allows you to edit the source files and see changes immediately by restarting Plasma or refreshing the widget.
