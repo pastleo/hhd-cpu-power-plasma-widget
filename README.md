@@ -1,66 +1,64 @@
-# HHD Control Plasmoid
+# HHD CPU Power Plasma Widget
 
-A KDE Plasma widget that provides a minimalistic GUI for HHD (Handheld Daemon). This plasmoid allows you to manage TDP (Thermal Design Power) settings and other handheld device controls directly from your desktop.
+A KDE Plasma widget that:
 
-The widget features:
-- Simple TDP slider control
-- Real-time TDP adjustment via HHD daemon
-- Configurable preset shortcuts
-- Compact design suitable for desktop panels or desktop placement
+- Shows CPU package power consumption with `turbostat`
+- Controls TDP with slider for [HHD (Handheld daemon)](https://github.com/hhd-dev/hhd)
+
+## Prerequisites
+
+- See supported devices on HHD page: https://github.com/hhd-dev/hhd?tab=readme-ov-file#supported-devices
+- This is built on Archlinux + [KDE Plasma](https://wiki.archlinux.org/title/KDE) setup
+  - [yay](https://github.com/Jguer/yay)
+  - [dkms](https://wiki.archlinux.org/title/Dynamic_Kernel_Module_Support)
+
+You need to set up HHD (Handheld Daemon) and related services first:
+
+```bash
+yay -S hhd hhd-ui adjustor apci_call-dkms
+sudo systemctl enable hhd@$USER 
+sudo systemctl enable power-profiles-daemon
+systemctl --user enable plasma-powerdevil
+reboot
+```
+
+After reboot, launch the `Handheld Daemon` desktop app:
+
+- `Settings` ->
+  - **disable** `energy management` and `PPD Emulation`, let's manage cpu governor with `power-profiles-daemon` & `powerdevil`.
+  - enable `TDP controls`
+- `General` -> disable `Hibernate when device asks and at 5%`
 
 ## Screenshots
 
-### Widget in Action
-![TDP Control Widget](docs/Screenshot_20250621_150756.png)
-*The HHD Control widget showing the TDP slider in the system panel*
+![TDP Control Widget](docs/Screenshot_20250621_193917.png)
 
-### Installation Dialog
-![Widget Installation](docs/Screenshot_20250621_152647.png)
-*Installing the widget through KDE's "Install Widget From Local File" dialog*
-
-## Building
-
-To build the plasmoid package for installation:
+## Building & Installation
 
 ```bash
-./build.sh
+git clone https://github.com/pastleo/hhd-tdp-ctl-plasma-widget.git
+cd hhd-tdp-ctl-plasma-widget
+./build.sh # and follow instruction to install
+
+cd pkg-watt-stat
+makepkg -si # and follow instruction to enable the service, this expose CPU package power for the widget
 ```
 
-This will create a `.plasmoid` file that can be installed on any KDE Plasma desktop.
+## Add the widget
 
-## Installation
+![Adding widget](docs/Screenshot_20250621_211641.png)
 
-### From Release
-1. Download the `.plasmoid` file from releases
-2. Install using: `kpackagetool6 --type=Plasma/Applet --install <filename>.plasmoid`
-
-### From Source
-1. Build the package: `./build.sh`
-2. Install the generated `.plasmoid` file: `kpackagetool6 --type=Plasma/Applet --install org.kde.plasma.desktoptdpcontrol-*.plasmoid`
-
-### Manual Installation (GUI)
-1. Right-click on your desktop and select "Enter Edit Mode"
-2. Click "Add or Manage Widgets" 
-3. Click "Get New Widgets" at the bottom
-4. Select "Install Widget From Local File..."
-5. Browse and select the `.plasmoid` file
-6. The widget will appear in your widget list as "HHD Control"
-
-## Management Commands
+### Uninstall 
 
 After installation, you can manage the plasmoid using these commands:
 
 ```bash
-# Upgrade to newer version
-kpackagetool6 --type=Plasma/Applet --upgrade org.kde.plasma.desktoptdpcontrol-*.plasmoid
-
-# Remove/uninstall
-kpackagetool6 --type=Plasma/Applet --remove org.kde.plasma.desktoptdpcontrol
-
 # List installed plasmoids  
 kpackagetool6 --type=Plasma/Applet --list
+
+# Uninstall widget
+kpackagetool6 --type=Plasma/Applet --remove org.kde.plasma.desktoptdpcontrol
+
+# Uninstall pkg-watt-stat
+yay -R pkg-watt-stat
 ```
-
-## Configuration
-
-The widget can be configured by right-clicking on it and selecting "Configure". You can customize TDP limits and other HHD daemon settings through the configuration panel.
