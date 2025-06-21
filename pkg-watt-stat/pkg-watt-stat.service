@@ -1,0 +1,27 @@
+[Unit]
+Description=CPU Package Power Consumption Monitor
+Documentation=https://github.com/pastleo/tdp-ctl-plasma-widget/pkg-watt-stat
+After=multi-user.target
+Wants=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/pkg-watt-stat
+User=root
+Group=root
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+# Security settings
+NoNewPrivileges=true
+ProtectSystem=true
+ProtectHome=true
+
+# Resource limits
+LimitNOFILE=1024
+LimitNPROC=10
+
+[Install]
+WantedBy=multi-user.target

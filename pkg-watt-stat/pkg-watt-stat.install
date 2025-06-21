@@ -1,0 +1,19 @@
+post_install() {
+    echo "To enable and start the pkg-watt-stat service:"
+    echo "  systemctl enable --now pkg-watt-stat.service"
+    echo ""
+    echo "Test the service with:"
+    echo "  echo '' | socat - UNIX-CONNECT:/tmp/pkg-watt-stat.sock"
+    echo ""
+    echo "View logs with:"
+    echo "  journalctl -u pkg-watt-stat.service -f"
+}
+
+post_upgrade() {
+    post_install
+}
+
+pre_remove() {
+    systemctl stop pkg-watt-stat.service 2>/dev/null || true
+    systemctl disable pkg-watt-stat.service 2>/dev/null || true
+}

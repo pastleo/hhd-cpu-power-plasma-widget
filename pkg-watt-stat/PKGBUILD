@@ -1,0 +1,24 @@
+# Maintainer: Your Name <your.email@example.com>
+pkgname=pkg-watt-stat
+pkgver=1.0.0
+pkgrel=1
+pkgdesc="CPU Package Power Consumption Monitor Service"
+arch=('any')
+url="https://github.com/pastleo/tdp-ctl-plasma-widget/pkg-watt-stat"
+license=('MIT')
+depends=('python' 'turbostat')
+install=pkg-watt-stat.install
+source=("pkg-watt-stat.py"
+        "pkg-watt-stat.service"
+        "pkg-watt-stat.install")
+sha256sums=('SKIP'
+            'SKIP'
+            'SKIP')
+
+package() {
+    # Install the Python service script
+    install -Dm755 "$srcdir/pkg-watt-stat.py" "$pkgdir/usr/bin/pkg-watt-stat"
+    
+    # Install systemd service file
+    install -Dm644 "$srcdir/pkg-watt-stat.service" "$pkgdir/usr/lib/systemd/system/pkg-watt-stat.service"
+}
