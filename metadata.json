@@ -7,15 +7,13 @@
         ],
         "Id": "org.kde.plasma.desktoptdpcontrol",
         "Category": "Utilities",
-        "Description": "HHD (Handheld Daemon) minimalistic gui",
+        "Description": "HHD (Handheld Daemon) minimalistic GUI",
         "Icon": "new-command-alarm", 
         "License": "GPL-3.0-or-later",
         "Name": "HHD Control",
         "Version": "1.0"
     },
-    "X-Plasma-API": "declarativeappletscript",
-    "X-Plasma-MainScript": "ui/main.qml",
     "X-Plasma-API-Minimum-Version": "6.0",
-    "KPackageStructure": "Plasma/Applet"
+    "X-KDE-FormFactors": "desktop,tablet,handset,mediacenter"
 
 }

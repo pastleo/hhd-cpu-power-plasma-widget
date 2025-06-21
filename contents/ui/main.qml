@@ -1,8 +1,8 @@
-import QtQuick 2.0
-import QtQuick.Layouts 1.0
-import org.kde.plasma.plasmoid 2.0
-import QtQuick.Controls 2.5
-import org.kde.plasma.core 2.0 as PlasmaCore
+import QtQuick
+import QtQuick.Layouts
+import org.kde.plasma.plasmoid
+import QtQuick.Controls
+import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.plasma5support as Plasma5Support
 

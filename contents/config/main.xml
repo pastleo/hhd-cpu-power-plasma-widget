@@ -8,9 +8,6 @@
             <default>true</default>
         </entry>
 
-        <entry name="tempCheckbox" type="Bool">
-            <default>true</default>
-        </entry>
 
 
         <entry name="preset1Checkbox" type="Bool">

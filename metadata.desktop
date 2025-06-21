@@ -1,14 +1,12 @@
 [Desktop Entry]
-Name=SteamDeck TDP
-Comment=Ryzenadj minimalistic gui
+Name=HHD Control
+Comment=HHD (Handheld Daemon) minimalistic GUI
 
 Type=Service
 Icon=new-command-alarm
 X-KDE-ServiceTypes=Plasma/Applet
 
-X-Plasma-API=declarativeappletscript
-X-Plasma-MainScript=ui/main.qml
-
+X-KDE-PluginInfo-Name=org.kde.plasma.desktoptdpcontrol
 X-KDE-PluginInfo-Author=FENZIGO
 X-KDE-PluginInfo-Version=1.0
 X-KDE-PluginInfo-Category=Utilities

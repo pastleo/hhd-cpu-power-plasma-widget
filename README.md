@@ -20,11 +20,11 @@ This will create a `.plasmoid` file that can be installed on any KDE Plasma desk
 
 ### From Release
 1. Download the `.plasmoid` file from releases
-2. Install using: `plasmapkg2 --install <filename>.plasmoid`
+2. Install using: `kpackagetool6 --type=Plasma/Applet --install <filename>.plasmoid`
 
 ### From Source
 1. Build the package: `./build.sh`
-2. Install the generated `.plasmoid` file: `plasmapkg2 --install org.kde.plasma.desktoptdpcontrol-*.plasmoid`
+2. Install the generated `.plasmoid` file: `kpackagetool6 --type=Plasma/Applet --install org.kde.plasma.desktoptdpcontrol-*.plasmoid`
 
 ### Manual Installation
 1. On your desktop: Right-click > Enter Edit Mode > Add or Manage Widgets > Get New > Install Widget From Local File...
@@ -38,13 +38,13 @@ After installation, you can manage the plasmoid using these commands:
 
 ```bash
 # Upgrade to newer version
-plasmapkg2 --upgrade org.kde.plasma.desktoptdpcontrol-*.plasmoid
+kpackagetool6 --type=Plasma/Applet --upgrade org.kde.plasma.desktoptdpcontrol-*.plasmoid
 
 # Remove/uninstall
-plasmapkg2 --remove org.kde.plasma.desktoptdpcontrol
+kpackagetool6 --type=Plasma/Applet --remove org.kde.plasma.desktoptdpcontrol
 
 # List installed plasmoids  
-plasmapkg2 --list
+kpackagetool6 --type=Plasma/Applet --list
 ```
 
 ## Configuration
