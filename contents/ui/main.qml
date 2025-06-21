@@ -7,10 +7,96 @@ import org.kde.plasma.components 3.0 as PlasmaComponents3
 import org.kde.plasma.plasma5support as Plasma5Support
 
 PlasmoidItem {
-    PlasmaComponents3.ToolButton {
-        onClicked: plasmoid.expanded = !plasmoid.expanded
-        ToolTip.text: i18n("Open HHD Control")
-        ToolTip.visible: hovered
+    property string displayText: "CPU"
+    property bool wattDataAvailable: false
+    
+    preferredRepresentation: compactRepresentation
+    
+    compactRepresentation: Item {
+        PlasmaComponents3.Label {
+            id: powerLabel
+            text: displayText
+            font.pixelSize: 1024
+            minimumPixelSize: theme.smallestFont.pixelSize
+            fontSizeMode: Text.Fit
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+            anchors.fill: parent
+        }
+        
+        property bool wasExpanded: false
+        
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onPressed: parent.wasExpanded = expanded
+            onClicked: expanded = !parent.wasExpanded
+            PlasmaComponents3.ToolTip {
+                text: i18n("Open HHD Control")
+            }
+        }
+    }
+    
+    Timer {
+        id: wattTimer
+        interval: 4000
+        running: true
+        repeat: true
+        onTriggered: getWattData()
+    }
+    
+    Plasma5Support.DataSource {
+        id: wattDataSource
+        engine: "executable"
+        connectedSources: []
+        onNewData: function(sourceName) {
+            var output = wattDataSource.data[sourceName].stdout.trim()
+            if (output) {
+                try {
+                    var json = JSON.parse(output)
+                    if (json.power_watts !== undefined) {
+                        displayText = Math.round(json.power_watts) + " W"
+                        wattDataAvailable = true
+                    }
+                } catch (e) {
+                    if (!wattDataAvailable) {
+                        displayText = "HHD TDP"
+                    }
+                }
+            } else {
+                if (!wattDataAvailable) {
+                    displayText = "HHD TDP"
+                }
+            }
+            wattDataSource.disconnectSource(sourceName)
+        }
+    }
+    
+    function getWattData() {
+        var pythonScript = `
+import socket
+import json
+import sys
+
+try:
+    client = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    client.settimeout(2)
+    client.connect('/tmp/pkg-watt-stat.sock')
+    data = client.recv(1024).decode().strip()
+    client.close()
+    if data:
+        print(data)
+    else:
+        sys.exit(1)
+except:
+    sys.exit(1)
+`
+        var command = `python3 -c "${pythonScript}"`
+        wattDataSource.connectSource(command)
+    }
+    
+    Component.onCompleted: {
+        getWattData()
     }
 
     fullRepresentation: ColumnLayout {

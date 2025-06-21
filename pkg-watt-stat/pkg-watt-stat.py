@@ -21,7 +21,7 @@ import argparse
 from pathlib import Path
 
 SOCKET_PATH = "/tmp/pkg-watt-stat.sock"
-TURBOSTAT_INTERVAL = 1  # seconds
+TURBOSTAT_INTERVAL = 4  # seconds
 
 
 class PkgWattMonitor:

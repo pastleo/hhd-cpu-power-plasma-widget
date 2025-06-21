@@ -1,17 +1,12 @@
 {
     "KPlugin": {
-        "Authors": [
-            {
-                "Name": "FENZIGO"
-            }
-        ],
         "Id": "org.kde.plasma.desktoptdpcontrol",
         "Category": "Utilities",
         "Description": "HHD (Handheld Daemon) minimalistic GUI",
         "Icon": "new-command-alarm", 
         "License": "GPL-3.0-or-later",
         "Name": "HHD Control",
-        "Version": "1.0"
+        "Version": "1.1"
     },
     "X-Plasma-API-Minimum-Version": "6.0",
     "X-KDE-FormFactors": "desktop,tablet,handset,mediacenter",
