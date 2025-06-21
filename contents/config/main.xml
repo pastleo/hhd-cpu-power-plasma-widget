@@ -3,35 +3,6 @@
     <kcfgfile name=""/>
 
     <group name="General">
-
-        <entry name="outputCheckbox" type="Bool">
-            <default>true</default>
-        </entry>
-
-
-
-        <entry name="preset1Checkbox" type="Bool">
-            <default>false</default>
-        </entry>
-        <entry name="preset1String" type="String">
-            <default></default>
-        </entry>
-        <entry name="preset1Name" type="String">
-            <default></default>
-        </entry>
-
-
-        <entry name="preset2Checkbox" type="Bool">
-            <default>false</default>
-        </entry>
-        <entry name="preset2String" type="String">
-            <default></default>
-        </entry>
-        <entry name="preset2Name" type="String">
-            <default></default>
-        </entry>
- 
-        
     </group>
     
 </kcfg>

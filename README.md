@@ -48,9 +48,7 @@ makepkg -si # and follow instruction to enable the service, this expose CPU pack
 
 ![Adding widget](docs/Screenshot_20250621_211641.png)
 
-### Uninstall 
-
-After installation, you can manage the plasmoid using these commands:
+### Uninstall
 
 ```bash
 # List installed plasmoids  

@@ -60,12 +60,12 @@ PlasmoidItem {
                     }
                 } catch (e) {
                     if (!wattDataAvailable) {
-                        displayText = "HHD TDP"
+                        displayText = "CPU"
                     }
                 }
             } else {
                 if (!wattDataAvailable) {
-                    displayText = "HHD TDP"
+                    displayText = "CPU"
                 }
             }
             wattDataSource.disconnectSource(sourceName)
